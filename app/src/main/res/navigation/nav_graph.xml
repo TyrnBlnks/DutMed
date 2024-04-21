@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/historyFragment">
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.example.dutmed.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/appointmentsFragment"
+        android:name="com.example.dutmed.AppointmentsFragment"
+        android:label="Appointments"
+        tools:layout="@layout/fragment_appointments" />
+
+    <!-- Health Topics Fragment -->
+    <fragment
+        android:id="@+id/healthTopicsFragment"
+        android:name="com.example.dutmed.HealthTopicsFragment"
+        android:label="Health Topics"
+        tools:layout="@layout/fragment_health_topics" />
+
+    <!-- Feedback Fragment -->
+    <fragment
+        android:id="@+id/feedbackFragment"
+        android:name="com.example.dutmed.FeedbackFragment"
+        android:label="Feedback"
+        tools:layout="@layout/fragment_feedback" />
+
+    <!-- About Fragment -->
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.dutmed.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about" />
+
+    <!-- Clinics Fragment -->
+    <fragment
+        android:id="@+id/clinicsFragment"
+        android:name="com.example.dutmed.ClinicsFragment"
+        android:label="Clinics"
+        tools:layout="@layout/fragments_clinics" />
+
+
+    <!-- Define actions if needed -->
+    <action
+        android:id="@+id/action_to_appointments"
+        app:destination="@id/appointmentsFragment" />
+
+</navigation>
