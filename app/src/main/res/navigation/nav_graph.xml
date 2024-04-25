@@ -38,11 +38,11 @@
         android:label="About"
         tools:layout="@layout/fragment_about" />
 
-    <!-- Clinics Fragment -->
+    <!-- Chatbot Fragment -->
     <fragment
-        android:id="@+id/clinicsFragment"
+        android:id="@+id/nav_chatbotFragment"
         android:name="com.example.dutmed.ChatbotFragment"
-        android:label="Clinics"
+        android:label="Chatbot"
         tools:layout="@layout/fragments_chatbot" />
 
 
