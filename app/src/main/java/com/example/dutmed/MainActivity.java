@@ -72,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
                         .replace(R.id.fragment_container, new HealthTopicsFragment())
                         .addToBackStack(null)
                         .commit();
-            } else if (id == R.id.nav_clinics) {
+            } else if (id == R.id.nav_chatbot) {
                 // Transition to the Clinics fragment
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ClinicsFragment())
+                        .replace(R.id.fragment_container, new ChatbotFragment())
                         .addToBackStack(null)
                         .commit();
             } else if (id == R.id.nav_feedback) {

@@ -43,7 +43,7 @@
         android:id="@+id/clinicsFragment"
         android:name="com.example.dutmed.ClinicsFragment"
         android:label="Clinics"
-        tools:layout="@layout/fragments_clinics" />
+        tools:layout="@layout/fragments_chatbot" />
 
 
     <!-- Define actions if needed -->

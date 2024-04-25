@@ -13,9 +13,9 @@
             android:icon="@drawable/ic_topics"
             android:title="@string/health_topics" />
         <item
-            android:id="@+id/nav_clinics"
-            android:icon="@drawable/ic_clinic"
-            android:title="@string/clinics" />
+            android:id="@+id/nav_chatbot"
+            android:icon="@drawable/chatbot"
+            android:title="@string/chatbot" />
 
     </group>
 

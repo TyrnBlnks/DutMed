@@ -11,7 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 public class DutMedDbHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "DutMed.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     // Table Names
     public static final String TABLE_SYMPTOM_CHECKER = "symptom_checker";
@@ -50,7 +50,7 @@ public class DutMedDbHelper extends SQLiteOpenHelper{
     public static final String COLUMN_FEEDBACK_TEXT = "feedback_text";
     public static final String COLUMN_SUGGESTIONS = "suggestions";
 
-
+    // User Table Columns
     public static final String TABLE_USERS = "users";
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_PASSWORD = "password";
