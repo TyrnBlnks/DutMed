@@ -41,7 +41,7 @@
     <!-- Clinics Fragment -->
     <fragment
         android:id="@+id/clinicsFragment"
-        android:name="com.example.dutmed.ClinicsFragment"
+        android:name="com.example.dutmed.ChatbotFragment"
         android:label="Clinics"
         tools:layout="@layout/fragments_chatbot" />
 
