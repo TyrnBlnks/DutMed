@@ -46,9 +46,4 @@
         tools:layout="@layout/fragments_chatbot" />
 
 
-    <!-- Define actions if needed -->
-    <action
-        android:id="@+id/action_to_appointments"
-        app:destination="@id/appointmentsFragment" />
-
 </navigation>
