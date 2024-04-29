@@ -39,11 +39,11 @@
         tools:layout="@layout/fragment_about" />
 
     <!-- Chatbot Fragment -->
-    <fragment
-        android:id="@+id/nav_chatbotFragment"
+    <activity
+        android:id="@+id/nav_chatbotActivity"
         android:name="com.example.dutmed.ChatbotActivity"
         android:label="Chatbot"
-        tools:layout="@layout/fragments_chatbot" />
+        tools:layout="@layout/activity_chatbot" />
 
 
 </navigation>

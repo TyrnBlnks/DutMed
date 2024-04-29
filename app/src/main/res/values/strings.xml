@@ -57,4 +57,8 @@
     <string name="chat_with_vivi">Chat w/ VIVI</string>
     <string name="vivi_response">VIVI response goes here</string>
     <string name="Admin_title">Welcome Admin</string>
+    <string name="the_admin_image_placeholder">the admin image</string>
+    <string name="view_appointments">View Appointments</string>
+    <string name="booking_history">Booking History</string>
+    <string name="manage_health_resources">Manage Health Resources</string>
 </resources>
