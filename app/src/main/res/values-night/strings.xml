@@ -5,4 +5,5 @@
     <string name="view_appointments">View Appointments</string>
     <string name="booking_history">Booking History</string>
     <string name="manage_health_resources">Manage Health Resources</string>
+    <string name="logout">logout</string>
 </resources>

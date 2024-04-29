@@ -61,4 +61,7 @@
     <string name="view_appointments">View Appointments</string>
     <string name="booking_history">Booking History</string>
     <string name="manage_health_resources">Manage Health Resources</string>
+    <string name="admin_profile">Admin Profile</string>
+    <string name="home">Home</string>
+    <string name="logout">Logout</string>
 </resources>
