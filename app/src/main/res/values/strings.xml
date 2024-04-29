@@ -51,4 +51,10 @@
     <string name="selected_role">None</string>
     <string name="role_not_received">Role not received</string>
     <string name="your_profile_image">your profile image</string>
+
+    <string name="query">Query</string>
+    <string name="prompt">Prompt</string>
+    <string name="chat_with_vivi">Chat w/ VIVI</string>
+    <string name="vivi_response">VIVI response goes here</string>
+    <string name="Admin_title">Welcome Admin</string>
 </resources>

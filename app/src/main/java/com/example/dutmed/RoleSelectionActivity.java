@@ -2,43 +2,35 @@ package com.example.dutmed;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+//import android.util.Log;
+//import android.view.View;
 import android.widget.Button;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-public class RoleSelectionActivity extends AppCompatActivity {
 
-    private Button patientButton;
-    private Button adminButton;
+public class RoleSelectionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_role_selection);
 
-        patientButton = findViewById(R.id.patientButton);
-        adminButton = findViewById(R.id.adminButton);
+        Button patientButton = findViewById(R.id.patientButton);
+        Button adminButton = findViewById(R.id.adminButton);
 
-        patientButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigateToLogin("Patient");
-            }
+        patientButton.setOnClickListener(v -> {
+            // Navigate to Patient Login Activity
+            Intent intent = new Intent(RoleSelectionActivity.this, Login.class);
+            intent.putExtra("userRole", "Patient"); // Add role as an extra in the intent
+            startActivity(intent);
         });
 
-        adminButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navigateToLogin("Admin");
-            }
+        adminButton.setOnClickListener(v -> {
+            // Navigate to Admin Login Activity
+            Intent intent = new Intent(RoleSelectionActivity.this, AdminLogin.class);
+            intent.putExtra("userRole", "Admin"); // Add role as an extra in the intent
+            startActivity(intent);
         });
-    }
-
-    private void navigateToLogin(String role) {
-        Intent intent = new Intent(RoleSelectionActivity.this, Login.class);
-        intent.putExtra("userRole", role);
-        Log.d("RoleSelection", "Selected Role: " + role);
-        startActivity(intent);
     }
 }

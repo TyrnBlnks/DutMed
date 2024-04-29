@@ -1,5 +1,6 @@
 package com.example.dutmed;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,48 +56,40 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_history) {
-                // Transition to the History fragment
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new HistoryFragment())
                         .addToBackStack(null)
                         .commit();
             } else if (id == R.id.nav_appointment) {
-                // Transition to the Appointments fragment
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new AppointmentsFragment())
                         .addToBackStack(null)
                         .commit();
             } else if (id == R.id.nav_health_topics) {
-                // Transition to the Health Topics fragment
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new HealthTopicsFragment())
                         .addToBackStack(null)
                         .commit();
             } else if (id == R.id.nav_chatbot) {
-                // Transition to the Clinics fragment
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ChatbotFragment())
-                        .addToBackStack(null)
-                        .commit();
+                Intent intent = new Intent(MainActivity.this, ChatbotActivity.class);
+                startActivity(intent);
             } else if (id == R.id.nav_feedback) {
-                // Transition to the Feedback fragment
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new FeedbackFragment())
                         .addToBackStack(null)
                         .commit();
             } else if (id == R.id.nav_about) {
-                // Transition to the About fragment
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new AboutFragment())
                         .addToBackStack(null)
                         .commit();
             } else if (id == R.id.nav_exit) {
-                // Handle exit logic, such as closing the app
                 finish();
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
+
 
     }
 

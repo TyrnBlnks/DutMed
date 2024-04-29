@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
@@ -25,6 +27,7 @@
     <!-- Application definition and its components (icons go here)-->
     <application
 
+        android:name=".DutMedApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -50,6 +53,11 @@
             android:name=".Login"
             android:exported="true" />
 
+        <!-- Admin Login activity -->
+        <activity
+            android:name=".AdminLogin"
+            android:exported="true" />
+
         <!-- Register activity -->
         <activity
             android:name=".Register"
@@ -59,8 +67,17 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.DutMed">
-        </activity>
+            android:theme="@style/Theme.DutMed" />
+
+        <!-- Admin Dash -->
+        <activity
+            android:name=".AdminDashboard"
+            android:exported="true" />
+
+        <!-- Chatbot activity -->
+        <activity
+            android:name=".ChatbotActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
