@@ -69,6 +69,11 @@
             android:exported="true"
             android:theme="@style/Theme.DutMed" />
 
+        <activity
+            android:name=".AppointmentActivity"
+            android:exported="true" />
+
+
         <!-- Admin Dash -->
         <activity
             android:name=".AdminDashboard"

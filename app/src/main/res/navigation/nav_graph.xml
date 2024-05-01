@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/appointmentsFragment"
-        android:name="com.example.dutmed.AppointmentsFragment"
+        android:name="com.example.dutmed.AppointmentsActivity"
         android:label="Appointments"
         tools:layout="@layout/fragment_appointments" />
 

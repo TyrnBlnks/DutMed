@@ -1,5 +1,6 @@
 package com.example.dutmed;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,7 +50,15 @@ public class Login extends AppCompatActivity {
     }
 
     private void performLogin(String email, String password) {
-        if (areCredentialsValid(email, password)) {
+        int userId = dbHelper.loginUser(email, password, userRole); // Adjust loginUser to return user ID
+        if (userId != -1) {
+            // Store user ID in SharedPreferences
+            SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("userId", userId);
+            editor.apply();
+
+            // Navigate to MainActivity
             Intent intent = new Intent(Login.this, MainActivity.class);
             startActivity(intent);
             finish();
