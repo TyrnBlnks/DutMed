@@ -1,20 +1,21 @@
 package com.example.dutmed;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import androidx.annotation.Nullable;
+
 import java.util.Random;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class DutMedDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "DutMed.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 7;
     private Context context; // Add this line to store the context
 
     // Table names
@@ -45,10 +46,7 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_APPOINTMENT_ID = "appointment_id";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_TIME_SLOT = "time_slot";
-    public static final String COLUMN_STATUS = "status";
-    public static final String COLUMN_DOCTOR_ASSIGNED = "doctor_assigned";
-    public static final String COLUMN_DIAGNOSIS = "diagnosis";
-    public static final String COLUMN_PRESCRIBED_MEDICATION = "prescribed_medication";
+    private static final String COLUMN_CAMPUS = "campus";
 
     // Symptom Checker table columns
     public static final String COLUMN_ENTRY_ID = "entry_id";
@@ -92,12 +90,10 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
             "appointment_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "user_id INTEGER NOT NULL, " +
             "date TEXT NOT NULL, " +
-            "time_slot TEXT NOT NULL, " +
-            "status TEXT NOT NULL, " +
-            "doctor_assigned TEXT, " +
-            "diagnosis TEXT, " +
-            "prescribed_medication TEXT, " +
-            "FOREIGN KEY(user_id) REFERENCES users(user_id))";
+            "time_slot TEXT NOT NULL, "+
+            "campus TEXT NOT NULL, " +
+            "FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE)";
+
 
     private static final String CREATE_TABLE_SYMPTOM_CHECKER = "CREATE TABLE symptom_checker (" +
             "entry_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -148,19 +144,21 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
 
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 2) {
-            // Assume adding a new column to the 'users' table in version 2
-            db.execSQL("ALTER TABLE users ADD COLUMN salt TEXT NOT NULL DEFAULT ''");
-        }
+        if (oldVersion < newVersion) {
+            // Drop the old appointments table if exists (or any other outdated tables)
+            db.execSQL("DROP TABLE IF EXISTS appointments");
+            db.execSQL("DROP TABLE IF EXISTS users");
 
-        if (newVersion > oldVersion) {
-            // Drop and recreate might be a last resort if incremental updates are not feasible
-            dropAllTables(db);
-            onCreate(db);
+            // Recreate the new appointments table with the correct schema
+            db.execSQL(CREATE_TABLE_APPOINTMENTS);
+            db.execSQL(CREATE_TABLE_USERS);
+            // Add any additional tables or updates needed here
         }
     }
+
 
     private void dropAllTables(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS users");
@@ -199,6 +197,41 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         }
         return sb.toString();
     }
+
+    //MORE Voids
+    public void handleDeleteAppointment(int userId, int appointmentId, String userEmail) {
+        String userRole = getUserRole(userEmail); // Now userEmail is passed as a parameter
+        if (deleteAppointment(userId, appointmentId, userRole)) {
+            System.out.println("Appointment deleted successfully.");
+        } else {
+            System.out.println("Failed to delete the appointment.");
+        }
+    }
+
+    public int loginUser(String email, String password, String role) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {COLUMN_USER_ID, COLUMN_PASSWORD, COLUMN_SALT};
+        String selection = COLUMN_EMAIL + " = ? AND " + COLUMN_ROLE + " = ?";
+        String[] selectionArgs = {email, role};
+        Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            @SuppressLint("Range") String storedPassword = cursor.getString(cursor.getColumnIndex(COLUMN_PASSWORD));
+            @SuppressLint("Range") String salt = cursor.getString(cursor.getColumnIndex(COLUMN_SALT));
+            if (storedPassword.equals(hashPassword(password, salt))) {
+                @SuppressLint("Range") int userId = cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID));
+                cursor.close();
+                db.close();
+                return userId; // Return user ID if login successful
+            }
+            cursor.close();
+        }
+        db.close();
+        return -1; // Return -1 if login fails
+    }
+
+
+
 
 
 
@@ -277,7 +310,34 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public long insertAppointments(int userID, String campus, String date, String timeSlot) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID, userID);
+        values.put(COLUMN_CAMPUS, campus);
+        values.put(COLUMN_DATE, date);
+        values.put(COLUMN_TIME_SLOT, timeSlot);
 
+        long newRowId = db.insert(TABLE_APPOINTMENTS, null, values);
+        db.close();
+        return newRowId;
+    }
+
+
+    public boolean isSlotBooked(String campusName, String slotTime, String bookingDate) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_APPOINTMENTS + " WHERE "
+                + COLUMN_CAMPUS + " = ? AND "
+                + COLUMN_TIME_SLOT + " = ? AND "
+                + COLUMN_DATE + " = ?";
+        String[] selectionArgs = {campusName, slotTime, bookingDate};
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+        boolean isBooked = cursor.moveToFirst(); // True if cursor is not empty
+        cursor.close();
+        db.close();
+        return isBooked;
+    }
 
 
     public long addProfile(int userId, String gender, int age, String treatments, String allergies) {
@@ -365,8 +425,6 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
 
 
 
-
-
     //retrieval (get)
     @SuppressLint("Range")
     public String getSaltByEmail(String email) {
@@ -390,6 +448,41 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         return salt;
     }
 
+    public String getUserRole(String userEmail) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {COLUMN_ROLE};
+        String selection = COLUMN_EMAIL + " = ?";
+        String[] selectionArgs = {userEmail};
+
+        Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
+
+        String role = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            int roleIndex = cursor.getColumnIndex(COLUMN_ROLE);
+            if (roleIndex != -1) {  // Check if the index is valid
+                role = cursor.getString(roleIndex);
+            }
+            cursor.close();
+        }
+        db.close();
+        return role;  // Returns the role of the user or null if not found or if the column index is invalid.
+    }
+
+
+    //Admin
+    public Cursor getUserAppointments(int userId, String userRole) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+        if (userRole.equals("admin")) {
+            cursor = db.query(TABLE_APPOINTMENTS, null, null, null, null, null, null);
+        } else {
+            String selection = COLUMN_USER_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(userId)};
+            cursor = db.query(TABLE_APPOINTMENTS, null, selection, selectionArgs, null, null, null);
+        }
+        return cursor;
+    }
+
 
     public Cursor getProfileByUserId(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -407,6 +500,27 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
     public Cursor getAllHealthResources() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.query(TABLE_HEALTH_RESOURCES, null, null, null, null, null, null);
+    }
+
+
+
+
+
+    //deletion (destroy)
+    public boolean deleteAppointment(int userId, int appointmentId, String userRole) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String whereClause = COLUMN_APPOINTMENT_ID + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(appointmentId)};
+
+        if (!userRole.equals("admin")) {
+            // For regular users, add an additional check to ensure they only delete their own appointments
+            whereClause += " AND " + COLUMN_USER_ID + " = ?";
+            whereArgs = new String[]{String.valueOf(appointmentId), String.valueOf(userId)};
+        }
+
+        int deletedRows = db.delete(TABLE_APPOINTMENTS, whereClause, whereArgs);
+        db.close();
+        return deletedRows > 0;
     }
 
 

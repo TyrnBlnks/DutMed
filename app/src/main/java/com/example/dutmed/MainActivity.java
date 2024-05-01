@@ -61,10 +61,8 @@ public class MainActivity extends AppCompatActivity {
                         .addToBackStack(null)
                         .commit();
             } else if (id == R.id.nav_appointment) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new AppointmentsFragment())
-                        .addToBackStack(null)
-                        .commit();
+                Intent intent = new Intent(MainActivity.this, AppointmentActivity.class);
+                startActivity(intent);
             } else if (id == R.id.nav_health_topics) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new HealthTopicsFragment())
