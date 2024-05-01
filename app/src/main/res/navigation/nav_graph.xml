@@ -11,9 +11,9 @@
         android:label="History"
         tools:layout="@layout/fragment_history" />
 
-    <fragment
-        android:id="@+id/appointmentsFragment"
-        android:name="com.example.dutmed.AppointmentsActivity"
+    <activity
+        android:id="@+id/nav_appointment"
+        android:name="com.example.dutmed.AppointmentActivity"
         android:label="Appointments"
         tools:layout="@layout/fragment_appointments" />
 
