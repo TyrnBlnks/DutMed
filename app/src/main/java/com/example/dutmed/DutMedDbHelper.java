@@ -1,14 +1,16 @@
 package com.example.dutmed;
 
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -147,16 +149,8 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < newVersion) {
-            // Drop the old appointments table if exists (or any other outdated tables)
-            db.execSQL("DROP TABLE IF EXISTS appointments");
-            db.execSQL("DROP TABLE IF EXISTS users");
-
-            // Recreate the new appointments table with the correct schema
-            db.execSQL(CREATE_TABLE_APPOINTMENTS);
-            db.execSQL(CREATE_TABLE_USERS);
-            // Add any additional tables or updates needed here
-        }
+        // Drop the old appointments table if exists (or any other outdated tables)
+        // Add any additional tables or updates needed here
     }
 
 
@@ -198,6 +192,9 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         return sb.toString();
     }
 
+    //system--------------------------------------------------------------------------------Break--------------------------------------------------------------------
+
+
     //MORE Voids
     public void handleDeleteAppointment(int userId, int appointmentId, String userEmail) {
         String userRole = getUserRole(userEmail); // Now userEmail is passed as a parameter
@@ -238,20 +235,15 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
     //display
     public void displayHealthResources() {
         DutMedDbHelper dbHelper = new DutMedDbHelper(getContext());
-        Cursor cursor = dbHelper.getAllHealthResources();
-        if (cursor != null && cursor.moveToFirst()) {
-            int titleIndex = cursor.getColumnIndex(DutMedDbHelper.COLUMN_TITLE);
-            int contentIndex = cursor.getColumnIndex(DutMedDbHelper.COLUMN_CONTENT);
+        List<HealthResource> resources = dbHelper.getAllHealthResources();
 
-            // Check if either index is -1, which means the column does not exist in the cursor
-            if (titleIndex == -1 || contentIndex == -1) {
-                throw new IllegalArgumentException("The column does not exist in the cursor.");
-            }
-            cursor.close();
+        // You can process the list of resources however you need. For example, you could log the details:
+        for (HealthResource resource : resources) {
+            Log.d("HealthResource", "Title: " + resource.getTitle() + ", Content: " + resource.getContent());
         }
+
         dbHelper.close();
     }
-
 
     public boolean checkUserCredentials(String email, String password, String role) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -470,7 +462,7 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
 
 
     //Admin
-    public Cursor getUserAppointments(int userId, String userRole) {
+    public List<Appointment> getAppointmentsByUserRole(int userId, String userRole) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor;
         if (userRole.equals("admin")) {
@@ -480,7 +472,76 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
             String[] selectionArgs = {String.valueOf(userId)};
             cursor = db.query(TABLE_APPOINTMENTS, null, selection, selectionArgs, null, null, null);
         }
-        return cursor;
+
+        List<Appointment> appointments = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                int appointmentIdIndex = cursor.getColumnIndex(COLUMN_APPOINTMENT_ID);
+                int userIdIndex = cursor.getColumnIndex(COLUMN_USER_ID);
+                int campusIndex = cursor.getColumnIndex(COLUMN_CAMPUS);
+                int dateIndex = cursor.getColumnIndex(COLUMN_DATE);
+                int timeSlotIndex = cursor.getColumnIndex(COLUMN_TIME_SLOT);
+                int firstNameIndex = cursor.getColumnIndex("first_name");
+                int lastNameIndex = cursor.getColumnIndex("last_name");
+
+                if (appointmentIdIndex != -1 && userIdIndex != -1 && campusIndex != -1 &&
+                        dateIndex != -1 && timeSlotIndex != -1 && firstNameIndex != -1 && lastNameIndex != -1) {
+                    Appointment appointment = new Appointment(
+                            cursor.getInt(appointmentIdIndex),
+                            cursor.getInt(userIdIndex),
+                            cursor.getString(campusIndex),
+                            cursor.getString(dateIndex),
+                            cursor.getString(timeSlotIndex),
+                            cursor.getString(firstNameIndex),
+                            cursor.getString(lastNameIndex)
+                    );
+                    appointments.add(appointment);
+                } else {
+                    // Handle the error or log it
+                    Log.e("Database", "One or more columns not found in the cursor.");
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return appointments;
+    }
+
+    public List<Feedback> getAllFeedback() {
+        List<Feedback> feedbackList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_FEEDBACK, null, null, null, null, null, null);
+
+        int idIndex = cursor.getColumnIndex(COLUMN_FEEDBACK_ID);
+        int userIdIndex = cursor.getColumnIndex(COLUMN_USER_ID);
+        int entryIdIndex = cursor.getColumnIndex(COLUMN_ENTRY_ID);
+        int textIndex = cursor.getColumnIndex(COLUMN_FEEDBACK_TEXT);
+        int suggestionsIndex = cursor.getColumnIndex(COLUMN_SUGGESTIONS);
+        int dateIndex = cursor.getColumnIndex(COLUMN_DATE_SUBMITTED);
+
+        if (idIndex == -1 || userIdIndex == -1 || entryIdIndex == -1 || textIndex == -1 || suggestionsIndex == -1 || dateIndex == -1) {
+            Log.e("Database", "One or more columns not found in the cursor.");
+            cursor.close();
+            db.close();
+            return feedbackList; // Return empty list or handle error appropriately
+        }
+
+        if (cursor.moveToFirst()) {
+            do {
+                Feedback feedback = new Feedback(
+                        cursor.getInt(idIndex),
+                        cursor.getInt(userIdIndex),
+                        cursor.getInt(entryIdIndex),
+                        cursor.getString(textIndex),
+                        cursor.getString(suggestionsIndex),
+                        cursor.getString(dateIndex)
+                );
+                feedbackList.add(feedback);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return feedbackList;
     }
 
 
@@ -492,21 +553,40 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
 
         return db.query(TABLE_PROFILES, columns, selection, selectionArgs, null, null, null);
     }
-    public Cursor getAllFeedback() {
+
+
+    public List<HealthResource> getAllHealthResources() {
+        List<HealthResource> resources = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(TABLE_FEEDBACK, null, null, null, null, null, null);
+        Cursor cursor = db.query(TABLE_HEALTH_RESOURCES, null, null, null, null, null, null);
+
+        int resourceIdIndex = cursor.getColumnIndex(COLUMN_RESOURCE_ID);
+        int titleIndex = cursor.getColumnIndex(COLUMN_TITLE);
+        int contentIndex = cursor.getColumnIndex(COLUMN_CONTENT);
+        int typeIndex = cursor.getColumnIndex(COLUMN_TYPE);
+        int imageUrlIndex = cursor.getColumnIndex(COLUMN_IMAGE_URL);
+
+        if (cursor.moveToFirst()) {
+            do {
+                if (resourceIdIndex != -1 && titleIndex != -1 && contentIndex != -1 &&
+                        typeIndex != -1 && imageUrlIndex != -1) {
+                    HealthResource resource = new HealthResource(
+                            cursor.getInt(resourceIdIndex),
+                            cursor.getString(titleIndex),
+                            cursor.getString(contentIndex),
+                            cursor.getString(typeIndex),
+                            cursor.getString(imageUrlIndex)
+                    );
+                    resources.add(resource);
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return resources;
     }
 
-    public Cursor getAllHealthResources() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(TABLE_HEALTH_RESOURCES, null, null, null, null, null, null);
-    }
-
-
-
-
-
-    //deletion (destroy)
+    //deletion (destroy)--------------------------------------------------------------------------------------------------------------------------------------------------
     public boolean deleteAppointment(int userId, int appointmentId, String userRole) {
         SQLiteDatabase db = this.getWritableDatabase();
         String whereClause = COLUMN_APPOINTMENT_ID + " = ?";
@@ -523,6 +603,14 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         return deletedRows > 0;
     }
 
+    public boolean deleteHealthResource(int resourceId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int deletedRows = db.delete(TABLE_HEALTH_RESOURCES, COLUMN_RESOURCE_ID + " = ?", new String[]{String.valueOf(resourceId)});
+        db.close();
+        return deletedRows > 0;
+    }
+
+//------------------------------------------------------------------------------------------------------------------
 
     public Context getContext() {
         return context;
