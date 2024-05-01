@@ -1,11 +1,11 @@
 package com.example.dutmed;
 
 public class HealthResource {
-    private int id;
-    private String title;
-    private String content;
-    private String type;
-    private String imageUrl;
+    private final int id;
+    private final String title;
+    private final String content;
+    private final String type;
+    private final String imageUrl;
 
     public HealthResource(int id, String title, String content, String type, String imageUrl) {
         this.id = id;

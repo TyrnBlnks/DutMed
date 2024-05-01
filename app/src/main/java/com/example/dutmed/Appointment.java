@@ -2,8 +2,13 @@ package com.example.dutmed;
 
 
 public class Appointment {
-    private int id, userId;
-    private String campus, date, timeSlot, firstName, lastName;
+    private final int id;
+    private final int userId;
+    private final String campus;
+    private final String date;
+    private final String timeSlot;
+    private final String firstName;
+    private final String lastName;
 
     public Appointment(int id, int userId, String campus, String date, String timeSlot, String firstName, String lastName) {
         this.id = id;
