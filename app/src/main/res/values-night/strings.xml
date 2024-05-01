@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Admin_title">Welcome Admin</string>
+    <string name="the_admin_image_placeholder">the admin image</string>
+    <string name="view_appointments">View Appointments</string>
+    <string name="booking_history">Booking History</string>
+    <string name="manage_health_resources">Manage Health Resources</string>
+    <string name="logout">Logout</string>
+    <string name="select_campus">Select Campus</string>
+    <string name="select_slot">Select Slot</string>
+    <string name="select_date">Select Date</string>
+    <string name="book_slot">Book Slot</string>
+</resources>

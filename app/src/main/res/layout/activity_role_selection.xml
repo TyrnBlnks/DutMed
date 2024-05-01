@@ -20,27 +20,27 @@
             android:layout_height="wrap_content"
             android:text="@string/userRole_label"
             android:textSize="24sp"
-            android:textColor="@color/white"
-            android:layout_marginBottom="30dp" />
+            android:textColor="@color/dark_purple"
+            android:layout_marginBottom="30dp"/>
 
         <Button
             android:id="@+id/patientButton"
-            android:layout_width="match_parent"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:text="@string/patient"
             android:backgroundTint="@color/white"
-            android:textColor="#3B84F1"
+            android:textColor="@color/dark_purple"
             android:textSize="20sp"
             android:padding="18dp"
             android:layout_margin="12dp"/>
 
         <Button
             android:id="@+id/adminButton"
-            android:layout_width="match_parent"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:text="@string/clinic_admin"
             android:backgroundTint="@color/white"
-            android:textColor="#3B84F1"
+            android:textColor="@color/dark_purple"
             android:textSize="20sp"
             android:padding="18dp"
             android:layout_margin="12dp"/>
