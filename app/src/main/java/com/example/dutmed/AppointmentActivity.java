@@ -1,17 +1,22 @@
 package com.example.dutmed;
 
-
 import android.annotation.SuppressLint;
+
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
 import android.view.View;
 import java.util.Calendar;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 public class AppointmentActivity extends AppCompatActivity {
+
 
     private Spinner spinnerCampus;
     private DatePicker datePicker;
@@ -41,10 +46,7 @@ public class AppointmentActivity extends AppCompatActivity {
     private void setupCampusSpinner() {
         // Sample campus names, replace with actual campus names
         String[] campuses = new String[] {
-                "Steve Biko Campus",
-                "Ritson Campus",
-                "ML Sultan Campus",
-                "City Campus"
+                "Steve Biko Campus", "Ritson Campus", "ML Sultan Campus", "City Campus"
         };
         ArrayAdapter<String> campusAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, campuses);
@@ -88,24 +90,9 @@ public class AppointmentActivity extends AppCompatActivity {
     private void setupTimeSlots() {
         // Sample time slots, replace with dynamic data if needed
         String[] timeSlots = new String[]{
-                "09:00 AM - 09:20 AM",
-                "09:25 AM - 09:45 AM",
-                "10:10 AM - 10:30 AM",
-                "10:35 AM - 10:55 AM",
-                "11:00 AM - 11:20 AM",
-                "11:25 AM - 11:45 AM",
-                "11:50 AM - 12:10 PM",
-                "12:15 PM - 12:35 PM",
-                "12:40 PM - 01:00 PM",
+                "09:00 AM - 09:20 AM", "09:25 AM - 09:45 AM", "10:10 AM - 10:30 AM", "10:35 AM - 10:55 AM", "11:00 AM - 11:20 AM", "11:25 AM - 11:45 AM", "11:50 AM - 12:10 PM", "12:15 PM - 12:35 PM", "12:40 PM - 01:00 PM",
                 //Break time
-                "02:00 PM - 02:15 PM",
-                "02:20 PM - 02:40 PM",
-                "02:45 PM - 03:05 PM",
-                "03:10 PM - 03:30 PM",
-                "03:35 PM - 03:55 PM",
-                "03:50 PM - 04:10 PM",
-                "04:15 PM - 04:35 PM",
-                "04:40 PM - 05:00 PM"
+                "02:00 PM - 02:15 PM", "02:20 PM - 02:40 PM", "02:45 PM - 03:05 PM", "03:10 PM - 03:30 PM", "03:35 PM - 03:55 PM", "03:50 PM - 04:10 PM", "04:15 PM - 04:35 PM", "04:40 PM - 05:00 PM"
         };
         ArrayAdapter<String> timeSlotAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, timeSlots);
@@ -122,52 +109,44 @@ public class AppointmentActivity extends AppCompatActivity {
         });
     }
 
-    private void saveBookingToDatabase(String campus, String date, String timeSlot) {
-        int userId = getCurrentUserId(); // Retrieve the current user's ID
-        if (userId == -1) {
-            Toast.makeText(this, "User not logged in. Please log in to make a booking.", Toast.LENGTH_LONG).show();
-            return; // Exit the method if no valid user ID is found
-        }
-
-        // Use dbHelper to insert the booking into the database with the user ID
-        long bookingId = dbHelper.insertAppointments(userId, campus, date, timeSlot);
-
-        // You can handle the result (bookingId) to show any confirmation message or log as needed
-        if (bookingId != -1) {
-            Toast.makeText(this, "Booking made for " + date + " at " + timeSlot, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Failed to save booking", Toast.LENGTH_SHORT).show();
-        }
-        dbHelper.close();
-    }
 
     public void attemptBooking() {
-        int userID = getCurrentUserId(); // This method should return the current user's ID.
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        int userId = prefs.getInt("userId", -1);  // Default to -1 if not found
+        if (userId == -1) {
+            Toast.makeText(this, "Session error or user not logged in", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String selectedCampus = spinnerCampus.getSelectedItem().toString();
         int day = datePicker.getDayOfMonth();
         int month = datePicker.getMonth();
         int year = datePicker.getYear();
         String selectedTimeSlot = spinnerTimeSlots.getSelectedItem().toString();
-        String formattedDate = String.format("%d-%02d-%02d", year, month + 1, day);
+
+        // Format the date into a string
+        @SuppressLint("DefaultLocale") String formattedDate = String.format("%d-%02d-%02d", year, month + 1, day);
 
         if (!dbHelper.isSlotBooked(selectedCampus, selectedTimeSlot, formattedDate)) {
-            // Passing the user ID and using the campus name directly as expected by the method
-            long result = dbHelper.insertAppointments(userID, selectedCampus, formattedDate, selectedTimeSlot);
+            // Slot is not booked, proceed with booking
+            long result = dbHelper.insertAppointments(userId, selectedCampus, formattedDate, selectedTimeSlot);
             if (result != -1) {
+                NotificationCompat.Builder mbuilder = new NotificationCompat.Builder(getApplicationContext())
+                        .setSmallIcon(R.drawable.bell_icon)
+                        .setContentTitle("Notification")
+                        .setContentText("Booking for " + formattedDate + " at: " + selectedTimeSlot + " on " + selectedCampus + ", has been Confirmed!");
+
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.notify(0, mbuilder.build());
                 Toast.makeText(this, "Booking successful!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(AppointmentActivity.this, UserAppointmentActivity.class);
+                startActivity(intent);
             } else {
                 Toast.makeText(this, "Failed to book slot.", Toast.LENGTH_LONG).show();
             }
         } else {
             Toast.makeText(this, "Slot already booked for this date.", Toast.LENGTH_LONG).show();
         }
-    }
-
-    public int getCurrentUserId() {
-        SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-        int userId = sharedPreferences.getInt("userId", -1);
-        Log.d("AppointmentsActivity", "Retrieved User ID: " + userId);
-        return userId;
     }
 
 

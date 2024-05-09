@@ -17,12 +17,12 @@
         android:label="Appointments"
         tools:layout="@layout/fragment_appointments" />
 
-    <!-- Health Topics Fragment -->
-    <fragment
-        android:id="@+id/healthTopicsFragment"
-        android:name="com.example.dutmed.HealthTopicsFragment"
+    <!-- Symptom Checker Fragment -->
+    <activity
+        android:id="@+id/nav_symptom_checker"
+        android:name="com.example.dutmed.SymptomChecker"
         android:label="Health Topics"
-        tools:layout="@layout/fragment_health_topics" />
+        tools:layout="@layout/symptom_click" />
 
     <!-- Feedback Fragment -->
     <fragment
@@ -44,6 +44,13 @@
         android:name="com.example.dutmed.ChatbotActivity"
         android:label="Chatbot"
         tools:layout="@layout/activity_chatbot" />
+
+    <!-- Profile Fragment -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.dutmed.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
 
 
 </navigation>

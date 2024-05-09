@@ -1,6 +1,7 @@
 package com.example.dutmed;
 
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,7 +27,14 @@ public class Login extends AppCompatActivity {
         // Initialize the EditText fields
         email = findViewById(R.id.email_input);
         pass = findViewById(R.id.password_input);
-        userRole = getIntent().getStringExtra("userRole");  // Get the role passed from RoleSelectionActivity
+
+        // Get role either from intent or SharedPreferences
+        userRole = getIntent().getStringExtra("userRole");
+        if (userRole == null) {
+            SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            userRole = prefs.getString("userRole", ""); // Fetch saved role, default to empty string if not found
+        }
+
         Log.d("Login", "Received Role: " + userRole);
 
         Button signUpButton = findViewById(R.id.signup_btn);
@@ -50,22 +58,38 @@ public class Login extends AppCompatActivity {
     }
 
     private void performLogin(String email, String password) {
-        int userId = dbHelper.loginUser(email, password, userRole); // Adjust loginUser to return user ID
-        if (userId != -1) {
-            // Store user ID in SharedPreferences
-            SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putInt("userId", userId);
+        if (email.isEmpty() || password.isEmpty() || userRole == null) {
+            Toast.makeText(Login.this, "Email, password, or role cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Cursor userCursor = dbHelper.loginUser(email, password, userRole);
+        if (userCursor != null && userCursor.moveToFirst()) {
+            int userIdIndex = userCursor.getColumnIndexOrThrow(DutMedDbHelper.COLUMN_USER_ID);
+            int userId = userCursor.getInt(userIdIndex);
+            userCursor.close();  // Close cursor immediately after use
+
+            SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("userId", userId); // Store the userId for global access
+            editor.putString("userRole", userRole); // Store the role if needed elsewhere in the app
             editor.apply();
 
-            // Navigate to MainActivity
+            userCursor.close();
+
             Intent intent = new Intent(Login.this, MainActivity.class);
             startActivity(intent);
             finish();
         } else {
+            if (userCursor != null) {
+                userCursor.close();
+            }
             Toast.makeText(Login.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
 
     private boolean areCredentialsValid(String email, String password) {
         return dbHelper.checkUserCredentials(email, password, userRole);

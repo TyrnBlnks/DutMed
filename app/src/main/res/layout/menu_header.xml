@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:padding="30dp">
+    android:layout_height="220dp"
+    android:padding="30dp"
+    tools:ignore="UseCompoundDrawables">
 
     <ImageView
         android:layout_width="120dp"
@@ -12,11 +14,12 @@
         android:contentDescription="@string/profile_image_description" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:padding="30dp"
         android:id="@+id/text_view_id"
         android:layout_marginTop="10dp"
-        android:layout_height="15dp"
+        android:layout_height="50dp"
+        android:textColor="@color/white"
         android:text="@string/welcome_message" />
 
 

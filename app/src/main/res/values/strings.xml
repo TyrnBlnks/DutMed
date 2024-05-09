@@ -68,4 +68,27 @@
     <string name="select_slot">Select Slot</string>
     <string name="select_date">Select Date</string>
     <string name="book_slot">Book Slot</string>
+    <string name="symptoms_checker">Symptom Checker</string>
+    <string name="symptom_checker">Symptom Checker</string>
+    <string name="profile">Profile</string>
+    <string name="appointments">Appointments</string>
+    <string name="extras">Extras</string>
+    <string name="communication">Communication</string>
+    <string name="menu_home">Home Page</string>
+    <string name="gender">Gender</string>
+    <string name="age">Age</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="allergies">Allergies</string>
+    <string name="current_treatments">Current Treatments</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="select">Select</string>
+    <string name="ritson">Ritson</string>
+    <string-array name="campus_array">
+        <item>All Campuses</item>
+        <item>Steve Biko Campus</item>
+        <item>Ritson Campus</item>
+        <item>ML Sultan Campus</item>
+        <item>City Campus</item>
+    </string-array>
 </resources>
