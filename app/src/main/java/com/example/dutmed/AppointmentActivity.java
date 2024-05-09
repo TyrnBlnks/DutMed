@@ -104,13 +104,13 @@ public class AppointmentActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attemptBooking();
+                attemptAppointment();
             }
         });
     }
 
 
-    public void attemptBooking() {
+    public void attemptAppointment() {
         SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         int userId = prefs.getInt("userId", -1);  // Default to -1 if not found
         if (userId == -1) {

@@ -77,6 +77,10 @@
             android:name=".AppointmentActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".UserAppointmentActivity"
+            android:exported="true" />
+
 
         <!-- Admin Dash -->
         <activity
@@ -87,6 +91,11 @@
         <activity
             android:name=".AdminViewAppointment"
             android:exported="true" />
+
+        <!-- Feedback Activity -->
+        <activity
+            android:name=".Feedback"
+            android:exported="true"/>
 
         <!-- Chatbot activity -->
         <activity

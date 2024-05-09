@@ -52,6 +52,11 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         holder.timeTextView.setText(appointment.getTime());
     }
 
+    public void setAppointments(List<Appointment> appointments) {
+        this.mData = appointments;
+        notifyDataSetChanged(); // Notify the adapter that the underlying data has changed
+    }
+
     @Override
     public int getItemCount() {
         return mDataFiltered.size();

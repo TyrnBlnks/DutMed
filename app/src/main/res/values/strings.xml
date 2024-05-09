@@ -84,6 +84,8 @@
     <string name="time">Time</string>
     <string name="select">Select</string>
     <string name="ritson">Ritson</string>
+    <string name="refresh">Refresh</string>
+    <string name="campus">Campus</string>
     <string-array name="campus_array">
         <item>All Campuses</item>
         <item>Steve Biko Campus</item>

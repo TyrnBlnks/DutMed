@@ -21,4 +21,6 @@
     <string name="age">Age</string>
     <string name="allergies">Allergies</string>
     <string name="current_treatments">Current Treatments</string>
+    <string name="refresh">Refresh</string>
+    <string name="campus">Campus</string>
 </resources>

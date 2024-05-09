@@ -16,25 +16,32 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/emailTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="email@email.com" />
+
+        <TextView
             android:id="@+id/campusTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/ritson" />
+            android:text="Ritson" />
 
         <TextView
             android:id="@+id/dateTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/date" />
+            android:text="01/01/2021" />
 
         <TextView
             android:id="@+id/timeTextView"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="@string/time" />
+            android:text="12:00 PM" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
