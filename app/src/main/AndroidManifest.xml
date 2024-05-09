@@ -63,6 +63,10 @@
             android:name=".Register"
             android:exported="true" />
 
+        <activity
+            android:name=".ProfileFragment"
+            android:exported="true" />
+
         <!-- Main activity -->
         <activity
             android:name=".MainActivity"
@@ -79,9 +83,19 @@
             android:name=".AdminDashboard"
             android:exported="true" />
 
+        <!-- Admin View Appointment-->
+        <activity
+            android:name=".AdminViewAppointment"
+            android:exported="true" />
+
         <!-- Chatbot activity -->
         <activity
             android:name=".ChatbotActivity"
+            android:exported="true" />
+
+        <!-- Symptom Checker activity -->
+        <activity
+            android:name=".SymptomChecker"
             android:exported="true" />
     </application>
 

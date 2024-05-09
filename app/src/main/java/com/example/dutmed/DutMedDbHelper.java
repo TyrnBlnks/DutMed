@@ -1,6 +1,7 @@
 package com.example.dutmed;
 
 import android.annotation.SuppressLint;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.content.ContentValues;
 import android.content.Context;
@@ -153,6 +154,15 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         // Add any additional tables or updates needed here
     }
 
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            // Enable foreign key constraints
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
+    }
+
 
     private void dropAllTables(SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS users");
@@ -205,27 +215,30 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public int loginUser(String email, String password, String role) {
+    public Cursor loginUser(String email, String password, String role) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] columns = {COLUMN_USER_ID, COLUMN_PASSWORD, COLUMN_SALT};
+        // Include the email in the columns array
+        String[] columns = {COLUMN_USER_ID, COLUMN_EMAIL, COLUMN_PASSWORD, COLUMN_SALT, COLUMN_FIRST_NAME};
         String selection = COLUMN_EMAIL + " = ? AND " + COLUMN_ROLE + " = ?";
         String[] selectionArgs = {email, role};
         Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
-            @SuppressLint("Range") String storedPassword = cursor.getString(cursor.getColumnIndex(COLUMN_PASSWORD));
-            @SuppressLint("Range") String salt = cursor.getString(cursor.getColumnIndex(COLUMN_SALT));
-            if (storedPassword.equals(hashPassword(password, salt))) {
-                @SuppressLint("Range") int userId = cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID));
-                cursor.close();
-                db.close();
-                return userId; // Return user ID if login successful
+            int passwordIndex = cursor.getColumnIndexOrThrow(COLUMN_PASSWORD);
+            int saltIndex = cursor.getColumnIndexOrThrow(COLUMN_SALT);
+            String storedPassword = cursor.getString(passwordIndex);
+            String salt = cursor.getString(saltIndex);
+
+            if (storedPassword != null && storedPassword.equals(hashPassword(password, salt))) {
+                return cursor;  // Return the cursor containing user data
             }
-            cursor.close();
+            cursor.close();  // Close the cursor to avoid memory leaks
         }
         db.close();
-        return -1; // Return -1 if login fails
+        return null;  // Return null if login fails
     }
+
+
 
 
 
@@ -302,18 +315,25 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public long insertAppointments(int userID, String campus, String date, String timeSlot) {
+    public long insertAppointments(int user_Id, String campus, String date, String timeSlot) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_ID, userID);
+        values.put(COLUMN_USER_ID, user_Id);  // Ensure this column is defined in your database helper constants
         values.put(COLUMN_CAMPUS, campus);
         values.put(COLUMN_DATE, date);
         values.put(COLUMN_TIME_SLOT, timeSlot);
 
-        long newRowId = db.insert(TABLE_APPOINTMENTS, null, values);
-        db.close();
+        long newRowId = -1;
+        try {
+            newRowId = db.insertOrThrow(TABLE_APPOINTMENTS, null, values);
+        } catch (SQLiteConstraintException e) {
+            Log.e("Database", "Constraint failure: " + e.getMessage());
+        } finally {
+            db.close();
+        }
         return newRowId;
     }
+
 
 
     public boolean isSlotBooked(String campusName, String slotTime, String bookingDate) {
@@ -345,6 +365,21 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         db.close();
         return result;
     }
+
+    public boolean updateProfile(int userId, String gender, int age, String treatments, String allergies) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_GENDER, gender);
+        values.put(COLUMN_AGE, age);
+        values.put(COLUMN_CURRENT_TREATMENTS, treatments);
+        values.put(COLUMN_ALLERGIES, allergies);
+
+        // Update profile where user_id matches
+        int updatedRows = db.update(TABLE_PROFILES, values, COLUMN_USER_ID + " = ?", new String[]{String.valueOf(userId)});
+        db.close();
+        return updatedRows > 0;
+    }
+
 
     public long addSymptomData(int userId, String symptoms, int severityScore, String advice) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -462,50 +497,6 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
 
 
     //Admin
-    public List<Appointment> getAppointmentsByUserRole(int userId, String userRole) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor;
-        if (userRole.equals("admin")) {
-            cursor = db.query(TABLE_APPOINTMENTS, null, null, null, null, null, null);
-        } else {
-            String selection = COLUMN_USER_ID + " = ?";
-            String[] selectionArgs = {String.valueOf(userId)};
-            cursor = db.query(TABLE_APPOINTMENTS, null, selection, selectionArgs, null, null, null);
-        }
-
-        List<Appointment> appointments = new ArrayList<>();
-        if (cursor.moveToFirst()) {
-            do {
-                int appointmentIdIndex = cursor.getColumnIndex(COLUMN_APPOINTMENT_ID);
-                int userIdIndex = cursor.getColumnIndex(COLUMN_USER_ID);
-                int campusIndex = cursor.getColumnIndex(COLUMN_CAMPUS);
-                int dateIndex = cursor.getColumnIndex(COLUMN_DATE);
-                int timeSlotIndex = cursor.getColumnIndex(COLUMN_TIME_SLOT);
-                int firstNameIndex = cursor.getColumnIndex("first_name");
-                int lastNameIndex = cursor.getColumnIndex("last_name");
-
-                if (appointmentIdIndex != -1 && userIdIndex != -1 && campusIndex != -1 &&
-                        dateIndex != -1 && timeSlotIndex != -1 && firstNameIndex != -1 && lastNameIndex != -1) {
-                    Appointment appointment = new Appointment(
-                            cursor.getInt(appointmentIdIndex),
-                            cursor.getInt(userIdIndex),
-                            cursor.getString(campusIndex),
-                            cursor.getString(dateIndex),
-                            cursor.getString(timeSlotIndex),
-                            cursor.getString(firstNameIndex),
-                            cursor.getString(lastNameIndex)
-                    );
-                    appointments.add(appointment);
-                } else {
-                    // Handle the error or log it
-                    Log.e("Database", "One or more columns not found in the cursor.");
-                }
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        db.close();
-        return appointments;
-    }
 
     public List<Feedback> getAllFeedback() {
         List<Feedback> feedbackList = new ArrayList<>();
@@ -585,6 +576,78 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         db.close();
         return resources;
     }
+
+    public List<Appointment> getAllAppointments() {
+        List<Appointment> appointmentList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM Appointments", null);
+
+        int campusIndex = cursor.getColumnIndex("campus");
+        int dateIndex = cursor.getColumnIndex("date");
+        int timeSlotIndex = cursor.getColumnIndex("time_slot");
+
+        if (campusIndex == -1 || dateIndex == -1 || timeSlotIndex == -1) {
+            // Handle the error, log it or throw an exception
+            Log.e("DatabaseError", "One or more columns not found in the database.");
+            return appointmentList;
+        }
+
+        if (cursor.moveToFirst()) {
+            do {
+                String campus = cursor.getString(campusIndex);
+                String date = cursor.getString(dateIndex);
+                String timeSlot = cursor.getString(timeSlotIndex);
+
+                Appointment appointment = new Appointment(campus, date, timeSlot);
+                appointmentList.add(appointment);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return appointmentList;
+    }
+
+
+    public List<Appointment> getAppointmentsByCampus(String campus) {
+        List<Appointment> appointmentsList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = campus.equals("All Campuses") ? null : COLUMN_CAMPUS + " = ?";
+        String[] selectionArgs = campus.equals("All Campuses") ? null : new String[]{campus};
+
+        Cursor cursor = db.query(TABLE_APPOINTMENTS, null, selection, selectionArgs, null, null, null);
+
+        // Get column indices from cursor
+        int campusIndex = cursor.getColumnIndex("campus");
+        int dateIndex = cursor.getColumnIndex("date");
+        int timeSlotIndex = cursor.getColumnIndex("time_slot");
+
+        // Check if any of the column indices are -1
+        if (campusIndex == -1 || dateIndex == -1 || timeSlotIndex == -1) {
+            Log.e("DatabaseError", "One or more columns not found in the database.");
+            cursor.close();
+            db.close();
+            return appointmentsList;  // Return empty list or handle this scenario as appropriate
+        }
+
+        if (cursor.moveToFirst()) {
+            do {
+                String campusVal = cursor.getString(campusIndex);
+                String date = cursor.getString(dateIndex);
+                String timeSlot = cursor.getString(timeSlotIndex);
+
+                Appointment appointment = new Appointment(campusVal, date, timeSlot);
+                appointmentsList.add(appointment);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return appointmentsList;
+    }
+
+
+
+
 
     //deletion (destroy)--------------------------------------------------------------------------------------------------------------------------------------------------
     public boolean deleteAppointment(int userId, int appointmentId, String userRole) {
