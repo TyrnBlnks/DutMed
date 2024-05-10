@@ -55,7 +55,7 @@ public class AdminViewAppointment extends AppCompatActivity {
     }
 
     private void filterAppointmentsByCampus(String campus) {
-        List<Appointment> filteredBookings = dbHelper.getAppointmentsByCampus(campus);
-        AppointmentsAdapter.updateData(filteredBookings);
+        List<Appointment> filterAppointments = dbHelper.getAllAppointments();
+        AppointmentsAdapter.updateData(filterAppointments);
     }
 }

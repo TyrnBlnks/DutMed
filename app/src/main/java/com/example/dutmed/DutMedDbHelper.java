@@ -499,16 +499,19 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         List<Appointment> appointmentList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] columns = {COLUMN_APPOINTMENT_ID, COLUMN_USER_ID, COLUMN_CAMPUS, COLUMN_DATE, COLUMN_TIME_SLOT};
-        String selection = COLUMN_USER_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(user_id)};
+        // Assuming TABLE_USERS is your user table and COLUMN_USER_EMAIL is the email field
+        String sql = "SELECT a.*, u." + COLUMN_EMAIL +
+                " FROM " + TABLE_APPOINTMENTS + " a " +
+                " JOIN " + TABLE_USERS + " u ON a." + COLUMN_USER_ID + " = u." + COLUMN_USER_ID +
+                " WHERE a." + COLUMN_USER_ID + " = ?";
 
-        Cursor cursor = db.query(TABLE_APPOINTMENTS, columns, selection, selectionArgs, null, null, null);
+        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(user_id)});
 
         if (cursor.moveToFirst()) {
             do {
                 @SuppressLint("Range") Appointment appointment = new Appointment(
                         cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_CAMPUS)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_DATE)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_TIME_SLOT))
@@ -520,6 +523,7 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         db.close();
         return appointmentList;
     }
+
 
 
     //Admin
@@ -606,15 +610,34 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         List<Appointment> appointmentList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM Appointments", null);
+        // Corrected SQL to include a JOIN with the Users table to access the email
+        String sql = "SELECT a.*, u.email FROM " + TABLE_APPOINTMENTS + " a " +
+                "JOIN " + TABLE_USERS + " u ON a." + COLUMN_USER_ID + " = u." + COLUMN_USER_ID;
+
+        Cursor cursor = db.rawQuery(sql, null);
+
+        // Get column indices safely
+        int userIdIndex = cursor.getColumnIndex(COLUMN_USER_ID);
+        int emailIndex = cursor.getColumnIndex("email");
+        int campusIndex = cursor.getColumnIndex(COLUMN_CAMPUS);
+        int dateIndex = cursor.getColumnIndex(COLUMN_DATE);
+        int timeSlotIndex = cursor.getColumnIndex(COLUMN_TIME_SLOT);
+
+        if (userIdIndex == -1 || emailIndex == -1 || campusIndex == -1 || dateIndex == -1 || timeSlotIndex == -1) {
+            Log.e("DatabaseError", "One or more columns not found in the cursor.");
+            cursor.close();
+            db.close();
+            return appointmentList; // Return empty list or handle error appropriately
+        }
 
         if (cursor.moveToFirst()) {
             do {
-                @SuppressLint("Range") Appointment booking = new Appointment(
-                        cursor.getInt(cursor.getColumnIndex("user_id")),
-                        cursor.getString(cursor.getColumnIndex("campus")),
-                        cursor.getString(cursor.getColumnIndex("date")),
-                        cursor.getString(cursor.getColumnIndex("time_slot"))
+                Appointment booking = new Appointment(
+                        cursor.getInt(userIdIndex),
+                        cursor.getString(emailIndex),
+                        cursor.getString(campusIndex),
+                        cursor.getString(dateIndex),
+                        cursor.getString(timeSlotIndex)
                 );
                 appointmentList.add(booking);
             } while (cursor.moveToNext());
@@ -623,23 +646,37 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         db.close();
         return appointmentList;
     }
+
+
 
 
     public List<Appointment> getAppointmentsByCampus(String campus) {
         List<Appointment> appointmentList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        String selection = campus.equals("All Campuses") ? null : COLUMN_CAMPUS + " = ?";
+
+        // Construct SQL query to join appointments with users based on user_id and filter by campus
+        String sql = "SELECT a.*, u." + COLUMN_EMAIL +
+                " FROM " + TABLE_APPOINTMENTS + " a " +
+                " JOIN " + TABLE_USERS + " u ON a." + COLUMN_USER_ID + " = u." + COLUMN_USER_ID +
+                (campus.equals("All Campuses") ? "" : " WHERE a." + COLUMN_CAMPUS + " = ?");
+
+
+        // Prepare the selection arguments if filtering by a specific campus
         String[] selectionArgs = campus.equals("All Campuses") ? null : new String[]{campus};
 
-        Cursor cursor = db.query(TABLE_APPOINTMENTS, null, selection, selectionArgs, null, null, null);
+        // Execute the query
+        Cursor cursor = campus.equals("All Campuses") ?
+                db.rawQuery(sql, null) :
+                db.rawQuery(sql, selectionArgs);
 
         if (cursor.moveToFirst()) {
             do {
                 @SuppressLint("Range") Appointment booking = new Appointment(
-                        cursor.getInt(cursor.getColumnIndex("user_id")),
-                        cursor.getString(cursor.getColumnIndex("campus")),
-                        cursor.getString(cursor.getColumnIndex("date")),
-                        cursor.getString(cursor.getColumnIndex("time_slot"))
+                        cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_CAMPUS)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_DATE)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_TIME_SLOT))
                 );
                 appointmentList.add(booking);
             } while (cursor.moveToNext());
@@ -648,6 +685,7 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         db.close();
         return appointmentList;
     }
+
 
 
 

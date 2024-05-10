@@ -51,7 +51,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/button1"
+                android:id="@+id/AdminView"
                 android:layout_width="150dp"
                 android:layout_height="100dp"
                 android:layout_margin="8dp"

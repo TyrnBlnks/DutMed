@@ -50,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
         setupBackButtonHandling();
         setupHeaderView();
 
+        // Load default fragment
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new HealthTopicsFragment())
+                    .commit();
+        }
+
         final OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {

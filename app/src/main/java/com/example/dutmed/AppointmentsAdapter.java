@@ -19,12 +19,14 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     private List<Appointment> mDataFiltered;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView emailTextView;
         private final TextView campusTextView;
         private final TextView dateTextView;
         private final TextView timeTextView;
 
         public ViewHolder(View view) {
             super(view);
+            emailTextView = view.findViewById(R.id.emailTextView);
             campusTextView = view.findViewById(R.id.campusTextView);
             dateTextView = view.findViewById(R.id.dateTextView);
             timeTextView = view.findViewById(R.id.timeTextView);
@@ -47,6 +49,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Appointment appointment = mDataFiltered.get(position);
+        holder.emailTextView.setText(appointment.getEmail());
         holder.campusTextView.setText(appointment.getCampus());
         holder.dateTextView.setText(appointment.getDate());
         holder.timeTextView.setText(appointment.getTime());

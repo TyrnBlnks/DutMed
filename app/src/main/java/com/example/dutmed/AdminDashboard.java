@@ -22,25 +22,26 @@ public class AdminDashboard extends AppCompatActivity {
 
     private void setupBottomNavigationView() {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-                if (itemId == R.id.AdminProfile) {
-                    // Assume AdminProfileFragment is a fragment showing admin profile details
-                    replaceFragment(new AdminProfile());
-                    return true;
-                } else if (itemId == R.id.AdminDashboard) {
-                    // Optionally do nothing or refresh the dashboard view
-                    return true;
-                } else if (itemId == R.id.AdminLogout) {
-                    performLogout();
-                    return true;
-                }
-                return false;
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId(); // Get the ID of the selected item
+
+            if (itemId == R.id.AdminDashboard) {
+                // Optionally do nothing or refresh the dashboard view
+                return true;
+            } else if (itemId == R.id.AdminLogout) {
+                performLogout();
+                return true;
+            } else if (itemId == R.id.Notify) {
+                // Start NotifyActivity instead of replacing a fragment
+                Intent intent = new Intent(AdminDashboard.this, NotifyActivity.class);
+                startActivity(intent);
+                return true;
             }
+            return false; // If none of the above, return false
         });
     }
+
+
 
 
     private void replaceFragment(AdminProfile fragment) {
@@ -50,7 +51,7 @@ public class AdminDashboard extends AppCompatActivity {
     }
 
     private void setupButtonListeners() {
-        findViewById(R.id.button1).setOnClickListener(v -> {
+        findViewById(R.id.AdminView).setOnClickListener(v -> {
             // Assume ViewAppointmentsActivity is an activity for viewing appointments
             startActivity(new Intent(this, AdminViewAppointment.class));
         });

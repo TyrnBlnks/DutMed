@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/AdminProfile"
-        android:title="@string/admin_profile"
+        android:id="@+id/Notify"
+        android:title="@string/SendNotification"
         android:textColor="@color/black"
-        android:icon="@drawable/admin_profile"/>
+        android:icon="@drawable/bell_icon"/>
     <item
         android:id="@+id/AdminDashboard"
         android:title="@string/home"

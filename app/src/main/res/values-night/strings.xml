@@ -29,4 +29,8 @@
     <string name="enter_symptoms_here">Enter Symptoms:</string>
     <string name="check_symptoms">Check Symptoms</string>
     <string name="results_will_appear_here">Results:</string>
+    <string name="enter_subject">Enter Subject:</string>
+    <string name="enter_content">Enter Email Content:</string>
+    <string name="send_email">Send Email</string>
+    <string name="SendNotification">Send Notification</string>
 </resources>
