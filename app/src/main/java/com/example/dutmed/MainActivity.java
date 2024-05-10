@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_appointment) {
                 startActivity(new Intent(MainActivity.this, AppointmentActivity.class));
             } else if (id == R.id.nav_symptom_checker) {
-                startActivity(new Intent(MainActivity.this, SymptomChecker.class));
+                startActivity(new Intent(MainActivity.this, QuestionAnswerActivity.class));
             } else if (id == R.id.nav_chatbot) {
                 startActivity(new Intent(MainActivity.this, ChatbotActivity.class));
             } else if (id == R.id.nav_feedback) {

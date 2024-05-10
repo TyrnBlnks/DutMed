@@ -55,7 +55,7 @@ public class AdminDashboard extends AppCompatActivity {
             startActivity(new Intent(this, AdminViewAppointment.class));
         });
 
-        /**findViewById(R.id.button2).setOnClickListener(v -> {
+        /*findViewById(R.id.button2).setOnClickListener(v -> {
             // Assume BookingHistoryActivity is an activity for viewing booking history
             startActivity(new Intent(this, BookingHistoryActivity.class));
         });
@@ -73,7 +73,7 @@ public class AdminDashboard extends AppCompatActivity {
 
     private void performLogout() {
         // Clear preferences or session management
-        Intent intent = new Intent(AdminDashboard.this, Login.class);
+        Intent intent = new Intent(AdminDashboard.this, AdminLogin.class);
         startActivity(intent);
         finish();
     }

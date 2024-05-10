@@ -546,7 +546,6 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Feedback feedback = new Feedback(
-                        cursor.getInt(idIndex),
                         cursor.getInt(userIdIndex),
                         cursor.getInt(entryIdIndex),
                         cursor.getString(textIndex),

@@ -23,4 +23,10 @@
     <string name="current_treatments">Current Treatments</string>
     <string name="refresh">Refresh</string>
     <string name="campus">Campus</string>
+    <string name="Start">Start</string>
+    <string name="welcome_to_symptom_checker_message">Welcome to Symptom Checker</string>
+    <string name="confirm">Confirm</string>
+    <string name="enter_symptoms_here">Enter Symptoms:</string>
+    <string name="check_symptoms">Check Symptoms</string>
+    <string name="results_will_appear_here">Results:</string>
 </resources>
