@@ -499,16 +499,30 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         List<Appointment> appointmentList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] columns = {COLUMN_APPOINTMENT_ID, COLUMN_USER_ID, COLUMN_CAMPUS, COLUMN_DATE, COLUMN_TIME_SLOT};
+        String[] columns = {
+                COLUMN_USER_ID,
+                COLUMN_EMAIL,
+                COLUMN_CAMPUS,
+                COLUMN_DATE,
+                COLUMN_TIME_SLOT
+        };
+
         String selection = COLUMN_USER_ID + " = ?";
         String[] selectionArgs = {String.valueOf(user_id)};
 
-        Cursor cursor = db.query(TABLE_APPOINTMENTS, columns, selection, selectionArgs, null, null, null);
+        Cursor cursor = db.query(
+                TABLE_APPOINTMENTS,
+                columns,
+                selection,
+                selectionArgs,
+                null, null, null
+        );
 
         if (cursor.moveToFirst()) {
             do {
                 @SuppressLint("Range") Appointment appointment = new Appointment(
                         cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_CAMPUS)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_DATE)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_TIME_SLOT))
@@ -520,6 +534,7 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         db.close();
         return appointmentList;
     }
+
 
 
     //Admin
@@ -612,6 +627,7 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
             do {
                 @SuppressLint("Range") Appointment booking = new Appointment(
                         cursor.getInt(cursor.getColumnIndex("user_id")),
+                        cursor.getString(cursor.getColumnIndex("email")),
                         cursor.getString(cursor.getColumnIndex("campus")),
                         cursor.getString(cursor.getColumnIndex("date")),
                         cursor.getString(cursor.getColumnIndex("time_slot"))
@@ -637,6 +653,7 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
             do {
                 @SuppressLint("Range") Appointment booking = new Appointment(
                         cursor.getInt(cursor.getColumnIndex("user_id")),
+                        cursor.getString(cursor.getColumnIndex("email")),
                         cursor.getString(cursor.getColumnIndex("campus")),
                         cursor.getString(cursor.getColumnIndex("date")),
                         cursor.getString(cursor.getColumnIndex("time_slot"))
