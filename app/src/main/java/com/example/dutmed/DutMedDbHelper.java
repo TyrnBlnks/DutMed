@@ -495,6 +495,32 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         return role;  // Returns the role of the user or null if not found or if the column index is invalid.
     }
 
+    public List<Appointment> getAppointmentsByUserId(int user_id) {
+        List<Appointment> appointmentList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] columns = {COLUMN_APPOINTMENT_ID, COLUMN_USER_ID, COLUMN_CAMPUS, COLUMN_DATE, COLUMN_TIME_SLOT};
+        String selection = COLUMN_USER_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(user_id)};
+
+        Cursor cursor = db.query(TABLE_APPOINTMENTS, columns, selection, selectionArgs, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") Appointment appointment = new Appointment(
+                        cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_CAMPUS)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_DATE)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_TIME_SLOT))
+                );
+                appointmentList.add(appointment);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return appointmentList;
+    }
+
 
     //Admin
 
@@ -520,7 +546,6 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Feedback feedback = new Feedback(
-                        cursor.getInt(idIndex),
                         cursor.getInt(userIdIndex),
                         cursor.getInt(entryIdIndex),
                         cursor.getString(textIndex),
@@ -583,24 +608,15 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery("SELECT * FROM Appointments", null);
 
-        int campusIndex = cursor.getColumnIndex("campus");
-        int dateIndex = cursor.getColumnIndex("date");
-        int timeSlotIndex = cursor.getColumnIndex("time_slot");
-
-        if (campusIndex == -1 || dateIndex == -1 || timeSlotIndex == -1) {
-            // Handle the error, log it or throw an exception
-            Log.e("DatabaseError", "One or more columns not found in the database.");
-            return appointmentList;
-        }
-
         if (cursor.moveToFirst()) {
             do {
-                String campus = cursor.getString(campusIndex);
-                String date = cursor.getString(dateIndex);
-                String timeSlot = cursor.getString(timeSlotIndex);
-
-                Appointment appointment = new Appointment(campus, date, timeSlot);
-                appointmentList.add(appointment);
+                @SuppressLint("Range") Appointment booking = new Appointment(
+                        cursor.getInt(cursor.getColumnIndex("user_id")),
+                        cursor.getString(cursor.getColumnIndex("campus")),
+                        cursor.getString(cursor.getColumnIndex("date")),
+                        cursor.getString(cursor.getColumnIndex("time_slot"))
+                );
+                appointmentList.add(booking);
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -610,42 +626,28 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
 
 
     public List<Appointment> getAppointmentsByCampus(String campus) {
-        List<Appointment> appointmentsList = new ArrayList<>();
+        List<Appointment> appointmentList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String selection = campus.equals("All Campuses") ? null : COLUMN_CAMPUS + " = ?";
         String[] selectionArgs = campus.equals("All Campuses") ? null : new String[]{campus};
 
         Cursor cursor = db.query(TABLE_APPOINTMENTS, null, selection, selectionArgs, null, null, null);
 
-        // Get column indices from cursor
-        int campusIndex = cursor.getColumnIndex("campus");
-        int dateIndex = cursor.getColumnIndex("date");
-        int timeSlotIndex = cursor.getColumnIndex("time_slot");
-
-        // Check if any of the column indices are -1
-        if (campusIndex == -1 || dateIndex == -1 || timeSlotIndex == -1) {
-            Log.e("DatabaseError", "One or more columns not found in the database.");
-            cursor.close();
-            db.close();
-            return appointmentsList;  // Return empty list or handle this scenario as appropriate
-        }
-
         if (cursor.moveToFirst()) {
             do {
-                String campusVal = cursor.getString(campusIndex);
-                String date = cursor.getString(dateIndex);
-                String timeSlot = cursor.getString(timeSlotIndex);
-
-                Appointment appointment = new Appointment(campusVal, date, timeSlot);
-                appointmentsList.add(appointment);
+                @SuppressLint("Range") Appointment booking = new Appointment(
+                        cursor.getInt(cursor.getColumnIndex("user_id")),
+                        cursor.getString(cursor.getColumnIndex("campus")),
+                        cursor.getString(cursor.getColumnIndex("date")),
+                        cursor.getString(cursor.getColumnIndex("time_slot"))
+                );
+                appointmentList.add(booking);
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
-        return appointmentsList;
+        return appointmentList;
     }
-
-
 
 
 

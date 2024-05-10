@@ -14,11 +14,9 @@ import java.util.List;
 
 public class AdminViewAppointment extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
     private AppointmentsAdapter AppointmentsAdapter;
     private DutMedDbHelper dbHelper;
     private Spinner campusSpinner;
-    private Button refreshButton;
 
 
     @Override
@@ -26,15 +24,15 @@ public class AdminViewAppointment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_booking);
 
-        recyclerView = findViewById(R.id.recycleView);
+        RecyclerView recyclerView = findViewById(R.id.recycleView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         campusSpinner = findViewById(R.id.campusSpinner);
-        refreshButton = findViewById(R.id.refreshButton);
+        Button refreshButton = findViewById(R.id.refreshButton);
 
         dbHelper = new DutMedDbHelper(this);
-        List<Appointment> bookings = dbHelper.getAllAppointments();
+        List<Appointment> appointments = dbHelper.getAllAppointments();
 
-        AppointmentsAdapter = new AppointmentsAdapter(bookings);
+        AppointmentsAdapter = new AppointmentsAdapter(appointments);
         recyclerView.setAdapter(AppointmentsAdapter);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -45,7 +43,7 @@ public class AdminViewAppointment extends AppCompatActivity {
         campusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                filterBookingsByCampus(parent.getItemAtPosition(position).toString());
+                filterAppointmentsByCampus(parent.getItemAtPosition(position).toString());
             }
 
             @Override
@@ -53,10 +51,10 @@ public class AdminViewAppointment extends AppCompatActivity {
             }
         });
 
-        refreshButton.setOnClickListener(v -> filterBookingsByCampus(campusSpinner.getSelectedItem().toString()));
+        refreshButton.setOnClickListener(v -> filterAppointmentsByCampus(campusSpinner.getSelectedItem().toString()));
     }
 
-    private void filterBookingsByCampus(String campus) {
+    private void filterAppointmentsByCampus(String campus) {
         List<Appointment> filteredBookings = dbHelper.getAppointmentsByCampus(campus);
         AppointmentsAdapter.updateData(filteredBookings);
     }

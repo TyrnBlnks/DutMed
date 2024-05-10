@@ -3,6 +3,7 @@
     <!--basic color-->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="dark_gray">#333333</color>
 
     <!--primary color-->
     <color name="light_purple2">#C199ED</color>
@@ -16,6 +17,7 @@
     <color name="dark_purple">#610C9F</color>
     <color name="userMessageColor">#007AFF</color>
     <color name="botMessageColor">#D50000</color>
+
 
 
 </resources>

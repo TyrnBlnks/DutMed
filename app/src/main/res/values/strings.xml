@@ -94,7 +94,16 @@
     <string name="EmergencyHealth">EmergencyHealth</string>
     <string name="ChildernHealth">ChildernHealth</string>
     <string name="DietandNutrition">DietandNutrition</string>
-    <string name="todo">TODO</string>
+  
+    <string name="refresh">Refresh</string>
+    <string name="campus">Campus</string>
+    <string name="Start">Start</string>
+    <string name="welcome_to_symptom_checker_message">Welcome to Symptom Checker</string>
+    <string name="confirm">Confirm</string>
+    <string name="enter_symptoms_here">Enter Symptoms:</string>
+    <string name="check_symptoms">Check Symptoms</string>
+    <string name="results_will_appear_here">Results:</string>
+
     <string-array name="campus_array">
         <item>All Campuses</item>
         <item>Steve Biko Campus</item>
