@@ -7,7 +7,7 @@ public class Appointment {
     private String date;
     private String timeSlot;
 
-    public Appointment(int user_id, String email, String campus, String date, String timeSlot) {
+    public Appointment(String email, String campus, String date, String timeSlot) {
         this.user_id = user_id;
         this.email = email;
         this.campus = campus;

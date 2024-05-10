@@ -10,14 +10,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdminViewAppointment extends AppCompatActivity {
 
-    private AppointmentsAdapter AppointmentsAdapter;
+    private AppointmentsAdapter appointmentsAdapter;
     private DutMedDbHelper dbHelper;
     private Spinner campusSpinner;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,36 +26,48 @@ public class AdminViewAppointment extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recycleView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         campusSpinner = findViewById(R.id.campusSpinner);
         Button refreshButton = findViewById(R.id.refreshButton);
 
         dbHelper = new DutMedDbHelper(this);
-        List<Appointment> appointments = dbHelper.getAllAppointments();
 
-        AppointmentsAdapter = new AppointmentsAdapter(appointments);
-        recyclerView.setAdapter(AppointmentsAdapter);
+        // Initialize adapter with empty list or default campus
+        appointmentsAdapter = new AppointmentsAdapter(new ArrayList<>());
+        recyclerView.setAdapter(appointmentsAdapter);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.campus_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         campusSpinner.setAdapter(adapter);
 
+        // Default selection handling
         campusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                filterAppointmentsByCampus(parent.getItemAtPosition(position).toString());
+                String selectedCampus = parent.getItemAtPosition(position).toString();
+                filterAppointmentsByCampus(selectedCampus);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                // Handle case where no selection is made if needed
             }
         });
 
-        refreshButton.setOnClickListener(v -> filterAppointmentsByCampus(campusSpinner.getSelectedItem().toString()));
+        refreshButton.setOnClickListener(v -> {
+            String selectedCampus = campusSpinner.getSelectedItem().toString();
+            filterAppointmentsByCampus(selectedCampus);
+        });
+
+        // Initial load with the default selected campus or the first item in the spinner
+        if (campusSpinner.getSelectedItem() != null) {
+            filterAppointmentsByCampus(campusSpinner.getSelectedItem().toString());
+        }
     }
 
     private void filterAppointmentsByCampus(String campus) {
         List<Appointment> filteredBookings = dbHelper.getAppointmentsByCampus(campus);
-        AppointmentsAdapter.updateData(filteredBookings);
+        appointmentsAdapter.updateData(filteredBookings);
     }
 }

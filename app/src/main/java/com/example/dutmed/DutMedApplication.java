@@ -15,8 +15,8 @@ public class DutMedApplication extends Application {
     private void initializeAdminAccounts() {
         DutMedDbHelper dbHelper = new DutMedDbHelper(this);
         try {
-            String adminEmail = "DutClinic@dut4life.ac.za";
-            String adminPassword = "12345678";
+            String adminEmail = "Admin@dut.com";
+            String adminPassword = "12345";
             String salt = dbHelper.generateSalt();
             String hashedPassword = dbHelper.hashPassword(adminPassword, salt);
             String adminFirstName = "Fantastic";

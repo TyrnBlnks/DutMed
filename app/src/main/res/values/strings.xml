@@ -97,6 +97,10 @@
     <string name="Start">Start</string>
     <string name="welcome_to_symptom_checker_message">Welcome to Symptom Checker</string>
     <string name="todo">To do</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="enter_content">Content</string>
+    <string name="enter_subject">Subject</string>
+    <string name="send_email">Send</string>
     <string-array name="campus_array">
         <item>All Campuses</item>
         <item>Steve Biko Campus</item>

@@ -148,8 +148,4 @@ public class AppointmentActivity extends AppCompatActivity {
             Toast.makeText(this, "Slot already booked for this date.", Toast.LENGTH_LONG).show();
         }
     }
-
-
-
-
 }
