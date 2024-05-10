@@ -84,6 +84,17 @@
     <string name="time">Time</string>
     <string name="select">Select</string>
     <string name="ritson">Ritson</string>
+    <string name="confirm">confirm</string>
+    <string name="results_will_appear_here">results_will_appear_here</string>
+    <string name="check_symptoms">check_symptoms</string>
+    <string name="enter_symptoms_here">enter_symptoms_here</string>
+    <string name="refresh">refresh</string>
+    <string name="campus">campus</string>
+    <string name="FamilyHealth">FamilyHealth</string>
+    <string name="EmergencyHealth">EmergencyHealth</string>
+    <string name="ChildernHealth">ChildernHealth</string>
+    <string name="DietandNutrition">DietandNutrition</string>
+    <string name="todo">TODO</string>
     <string-array name="campus_array">
         <item>All Campuses</item>
         <item>Steve Biko Campus</item>

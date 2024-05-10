@@ -71,7 +71,7 @@ public class ChatbotActivity extends AppCompatActivity {
                 public void onResponse(String response){
 
                     progressBar.setVisibility(View.GONE);
-                    populateChatBody("GeminiPro", response,getDate());
+                    populateChatBody("VIVI", response,getDate());
 
                 }
 
