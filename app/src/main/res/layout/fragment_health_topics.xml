@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/healthTopics"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/background2"
+    android:padding="16dp"
+    tools:context=".HealthTopicsFragment">
+
+    <!-- Dropdown for Alphabet Navigation -->
+    <TextView
+        android:id="@+id/dropdownHealthTopics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/home"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+    <!-- ScrollView for ImageViews and Links Container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="8dp">
+
+
+            <TextView
+                android:id="@+id/link1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="TODO"
+                android:gravity="center"
+                android:text="@string/FamilyHealth"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+            <!-- Repeated block for each image and link -->
+
+            <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/adole_ic"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/link2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/EmergencyHealth"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/doc"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/link3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/ChildernHealth"
+                android:textColor="@color/black"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp"
+                android:textSize="18sp"/>
+
+            <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/teddy"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/link4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/DietandNutrition"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/vegfr"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"/>
+
+
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
