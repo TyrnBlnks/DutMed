@@ -15,21 +15,22 @@ import android.widget.Toast;
 public class ProfileFragment extends Fragment {
     private EditText genderField, ageField, treatmentsField, allergiesField;
     private DutMedDbHelper dbHelper;
-    private int userId; // This should be set from the activity or another source
+    private int userId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         initializeViews(view);
         dbHelper = new DutMedDbHelper(getContext());
+        userId = getUserId();  // Retrieve user ID here after context is available
 
-        userId = getUserId();
         if (userId == -1) {
             Toast.makeText(getContext(), "Invalid user ID, please log in again.", Toast.LENGTH_LONG).show();
-            return view; // Optionally consider navigating the user to a login screen
+            // Optionally consider navigating the user to a login screen
+            return view;
         }
 
-        loadProfileData();
+        //loadProfileData();
 
         Button updateButton = view.findViewById(R.id.update_profile_button);
         updateButton.setOnClickListener(v -> updateProfile());
@@ -45,11 +46,16 @@ public class ProfileFragment extends Fragment {
 
     private void loadProfileData() {
         Cursor cursor = dbHelper.getProfileByUserId(userId);
-        if (cursor != null && cursor.moveToFirst()) {
-            safelyLoadProfileData(cursor);
-            cursor.close();
-        } else {
-            Toast.makeText(getContext(), "Failed to load profile data!", Toast.LENGTH_LONG).show();
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    safelyLoadProfileData(cursor);
+                } else {
+                    Toast.makeText(getContext(), "Failed to load profile data!", Toast.LENGTH_LONG).show();
+                }
+            } finally {
+                cursor.close();
+            }
         }
     }
 
@@ -75,8 +81,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateProfile() {
+        String gender = genderField.getText().toString();
         try {
-            String gender = genderField.getText().toString();
             int age = Integer.parseInt(ageField.getText().toString());
             String treatments = treatmentsField.getText().toString();
             String allergies = allergiesField.getText().toString();
@@ -97,4 +103,3 @@ public class ProfileFragment extends Fragment {
         return sharedPreferences.getInt("USER_ID", -1);
     }
 }
-

@@ -100,6 +100,11 @@
     <string name="enter_content">Enter Email Content:</string>
     <string name="send_email">Send Email</string>
     <string name="SendNotification">Send Notification</string>
+    <string name="image_url">Image URL</string>
+    <string name="type">Type</string>
+    <string name="content">Content</string>
+    <string name="title">Title</string>
+    <string name="add_resource">Add Resource</string>
 
     <string-array name="campus_array">
         <item>All Campuses</item>

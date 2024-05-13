@@ -239,12 +239,6 @@ public class DutMedDbHelper extends SQLiteOpenHelper {
     }
 
 
-
-
-
-
-
-
     //display
     public void displayHealthResources() {
         DutMedDbHelper dbHelper = new DutMedDbHelper(getContext());

@@ -32,7 +32,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DutMed"
         tools:targetApi="31">
-
+        <activity
+            android:name=".AddHealthTopicsActivity"
+            android:exported="false" />
         <!-- Role Selection activity set as the main entry point -->
         <activity
             android:name=".RoleSelectionActivity"
@@ -88,8 +90,6 @@
         <activity
             android:name=".SymptomChecker"
             android:exported="true" />
-
-
     </application>
 
 </manifest>

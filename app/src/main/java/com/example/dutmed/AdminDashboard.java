@@ -64,12 +64,12 @@ public class AdminDashboard extends AppCompatActivity {
         findViewById(R.id.button3).setOnClickListener(v -> {
             // Assume ManageHealthResourcesActivity is an activity to manage health resources
             startActivity(new Intent(this, ManageHealthResources.class));
-        });**/
+        });
 
         findViewById(R.id.button4).setOnClickListener(v -> {
             // Assume FeedbackActivity is an activity to manage feedback
             startActivity(new Intent(this, Feedback.class));
-        });
+        });**/
     }
 
     private void performLogout() {
